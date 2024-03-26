@@ -96,10 +96,6 @@ public class GithubInformationProvider extends EventCollectableInformationProvid
         );
     }
 
-    public GithubInformationProvider() {
-        super("https://api.github.com");
-    }
-
     @Override
     public boolean isSupported(URI url) {
         return REPOSITORY_PATTERN.matcher(url.toString()).matches();

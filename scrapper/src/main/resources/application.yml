@@ -2,15 +2,13 @@ app:
   scheduler:
     enable: true
     interval: 10s
-    force-check-delay: 1m
+    force-check-delay: 10s
     max-links-per-check: 100
   github-token: ${GITHUB_TOKEN}
   stackoverflow:
     key: ${STACKOVERFLOW_KEY}
     access-token: ${STACKOVERFLOW_ACCESS_TOKEN}
-
-database:
-  accessor: jooq
+  database-access-type: jpa
 
 provider:
   github:
@@ -27,6 +25,10 @@ spring:
     url: jdbc:postgresql://localhost:5432/scrapper
     username: postgres
     password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
 
 bot:
   url: http://localhost:8090

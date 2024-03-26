@@ -8,4 +8,9 @@ public record ListLinksResponse(
     List<LinkResponse> links,
     Integer size
 ) {
+
+    public ListLinksResponse(List<LinkResponse> links) {
+        this(links, links.size());
+    }
+
 }

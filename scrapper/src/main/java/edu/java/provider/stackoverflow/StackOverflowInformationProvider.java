@@ -60,10 +60,6 @@ public class StackOverflowInformationProvider extends EventCollectableInformatio
         }
     }
 
-    public StackOverflowInformationProvider() {
-        this("https://api.stackexchange.com/2.3", new ApplicationConfig(null, null, null), new ObjectMapper());
-    }
-
     @Override
     public boolean isSupported(URI url) {
         return QUESTION_PATTERN.matcher(url.toString()).matches();

@@ -58,6 +58,6 @@ public class JdbcChatServiceIntegrationTest extends IntegrationEnvironment {
 
     @DynamicPropertySource
     static void jdbcProperties(DynamicPropertyRegistry registry) {
-        registry.add("database.accessor", () -> "jdbc");
+        registry.add("app.database-access-type", () -> "jdbc");
     }
 }

@@ -21,7 +21,8 @@ public class StackOverflowProviderTest {
     private static final ApplicationConfig EMPTY_CONFIG = new ApplicationConfig(
         null,
         null,
-        new ApplicationConfig.StackOverflowCredentials(null, null)
+        new ApplicationConfig.StackOverflowCredentials(null, null),
+        null
     );
 
     @BeforeAll
