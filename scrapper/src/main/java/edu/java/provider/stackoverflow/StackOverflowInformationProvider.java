@@ -3,10 +3,12 @@ package edu.java.provider.stackoverflow;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.java.configuration.ApplicationConfig;
+import edu.java.configuration.RetryConfig;
 import edu.java.provider.api.EventCollectableInformationProvider;
 import edu.java.provider.api.LinkInformation;
 import edu.java.provider.api.LinkUpdateEvent;
 import edu.java.provider.stackoverflow.model.StackOverflowItem;
+import edu.java.util.retry.RetryFactory;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -32,9 +34,10 @@ public class StackOverflowInformationProvider extends EventCollectableInformatio
     public StackOverflowInformationProvider(
         @Value("${provider.stackoverflow.url}") String apiUrl,
         ApplicationConfig config,
-        ObjectMapper mapper
+        ObjectMapper mapper,
+        RetryConfig retryConfig
     ) {
-        super(apiUrl);
+        super(apiUrl, RetryFactory.createRetry(retryConfig, "stackoverflow"));
         this.mapper = mapper;
         registerCollector(
             "AnswerEvent",
@@ -58,10 +61,6 @@ public class StackOverflowInformationProvider extends EventCollectableInformatio
         } else {
             authorizationQueryParam = "";
         }
-    }
-
-    public StackOverflowInformationProvider() {
-        this("https://api.stackexchange.com/2.3", new ApplicationConfig(null, null, null), new ObjectMapper());
     }
 
     @Override

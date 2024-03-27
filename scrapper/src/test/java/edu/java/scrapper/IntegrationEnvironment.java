@@ -7,13 +7,16 @@ import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.resource.DirectoryResourceAccessor;
 import lombok.SneakyThrows;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.JdbcDatabaseContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import javax.cache.annotation.CacheRemoveAll;
 
 @Testcontainers
+@DirtiesContext
 public abstract class IntegrationEnvironment {
     public static PostgreSQLContainer<?> POSTGRES;
 

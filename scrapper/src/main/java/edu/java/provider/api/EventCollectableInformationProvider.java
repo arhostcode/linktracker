@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.function.Function;
 import lombok.Getter;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.util.retry.Retry;
 
 @Getter
 public abstract class EventCollectableInformationProvider<T> extends WebClientInformationProvider {
@@ -17,6 +18,10 @@ public abstract class EventCollectableInformationProvider<T> extends WebClientIn
 
     public EventCollectableInformationProvider(String apiUrl) {
         super(apiUrl);
+    }
+
+    public EventCollectableInformationProvider(String apiUrl, Retry retry) {
+        super(apiUrl, retry);
     }
 
     public void registerCollector(String type, Function<T, LinkUpdateEvent> collector) {

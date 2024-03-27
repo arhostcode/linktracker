@@ -6,6 +6,7 @@ import edu.java.bot.client.scrapper.dto.request.RemoveLinkRequest;
 import edu.java.bot.client.scrapper.dto.response.LinkResponse;
 import edu.java.bot.client.scrapper.dto.response.ListLinksResponse;
 import edu.java.bot.dto.OptionalAnswer;
+import jakarta.annotation.PostConstruct;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,5 +35,10 @@ public class DefaultBotService implements BotService {
     @Override
     public OptionalAnswer<ListLinksResponse> listLinks(Long userId) {
         return scrapperClient.listLinks(userId);
+    }
+
+    @PostConstruct
+    public void init() {
+        scrapperClient.deleteChat(1L);
     }
 }

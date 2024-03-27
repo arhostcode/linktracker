@@ -8,6 +8,10 @@ import edu.java.persitence.jdbc.repository.JdbcLinkRepository;
 import edu.java.persitence.jooq.repository.JooqChatLinkRepository;
 import edu.java.persitence.jooq.repository.JooqChatRepository;
 import edu.java.persitence.jooq.repository.JooqLinkRepository;
+import edu.java.persitence.jpa.repository.JpaChatRepository;
+import edu.java.persitence.jpa.repository.JpaLinkRepository;
+import edu.java.persitence.jpa.service.JpaChatService;
+import edu.java.persitence.jpa.service.JpaLinkService;
 import edu.java.provider.InformationProviders;
 import edu.java.service.ChatService;
 import edu.java.service.LinkService;
@@ -19,7 +23,7 @@ import org.springframework.context.annotation.Configuration;
 public class DatabaseConfiguration {
 
     @Bean
-    @ConditionalOnProperty(name = "database.accessor", havingValue = "jdbc")
+    @ConditionalOnProperty(name = "app.database-access-type", havingValue = "jdbc")
     public ChatService jdbcChatService(
         JdbcChatRepository tgChatRepository,
         JdbcChatLinkRepository tgChatLinkRepository,
@@ -29,7 +33,7 @@ public class DatabaseConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(name = "database.accessor", havingValue = "jdbc")
+    @ConditionalOnProperty(name = "app.database-access-type", havingValue = "jdbc")
     public LinkService jdbcLinkService(
         JdbcLinkRepository linkRepository,
         JdbcChatLinkRepository tgChatLinkRepository,
@@ -39,7 +43,7 @@ public class DatabaseConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(name = "database.accessor", havingValue = "jooq")
+    @ConditionalOnProperty(name = "app.database-access-type", havingValue = "jooq")
     public ChatService jooqChatService(
         JooqChatRepository tgChatRepository,
         JooqChatLinkRepository tgChatLinkRepository,
@@ -49,13 +53,32 @@ public class DatabaseConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(name = "database.accessor", havingValue = "jooq")
+    @ConditionalOnProperty(name = "app.database-access-type", havingValue = "jooq")
     public LinkService jooqLinkService(
         JooqLinkRepository linkRepository,
         JooqChatLinkRepository tgChatLinkRepository,
         InformationProviders informationProviders
     ) {
         return new DefaultLinkService(linkRepository, tgChatLinkRepository, informationProviders);
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = "app.database-access-type", havingValue = "jpa")
+    public ChatService jpaChatService(
+        JpaChatRepository jpaChatRepository,
+        JpaLinkRepository jpaLinkRepository
+    ) {
+        return new JpaChatService(jpaChatRepository, jpaLinkRepository);
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = "app.database-access-type", havingValue = "jpa")
+    public LinkService jpaLinkService(
+        JpaLinkRepository jpaLinkRepository,
+        JpaChatRepository jpaChatRepository,
+        InformationProviders informationProviders
+    ) {
+        return new JpaLinkService(jpaLinkRepository, jpaChatRepository, informationProviders);
     }
 
 }

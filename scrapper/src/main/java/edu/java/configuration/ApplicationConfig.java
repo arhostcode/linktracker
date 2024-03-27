@@ -11,7 +11,8 @@ public record ApplicationConfig(
     @NotNull
     Scheduler scheduler,
     String githubToken,
-    StackOverflowCredentials stackOverflow
+    StackOverflowCredentials stackOverflow,
+    AccessType databaseAccessType
 ) {
     public record Scheduler(
         boolean enable,
@@ -25,5 +26,9 @@ public record ApplicationConfig(
         String key,
         String accessToken
     ) {
+    }
+
+    public enum AccessType {
+        JDBC, JPA, JOOQ
     }
 }

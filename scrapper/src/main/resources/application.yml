@@ -2,15 +2,13 @@ app:
   scheduler:
     enable: true
     interval: 10s
-    force-check-delay: 1m
+    force-check-delay: 10s
     max-links-per-check: 100
   github-token: ${GITHUB_TOKEN}
   stackoverflow:
     key: ${STACKOVERFLOW_KEY}
     access-token: ${STACKOVERFLOW_ACCESS_TOKEN}
-
-database:
-  accessor: jooq
+  database-access-type: jpa
 
 provider:
   github:
@@ -27,6 +25,17 @@ spring:
     url: jdbc:postgresql://localhost:5432/scrapper
     username: postgres
     password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  cache:
+    jcache:
+      provider: com.github.benmanes.caffeine.jcache.spi.CaffeineCachingProvider
+    caffeine:
+      spec: maximumSize=100000,expireAfterAccess=3600s
+    cache-names:
+      - rate-limit-bucket
 
 bot:
   url: http://localhost:8090
@@ -40,3 +49,40 @@ logging:
 springdoc:
   swagger-ui:
     path: /swagger-ui
+
+retry:
+  targets:
+    - target: github
+      max-attempts: 5
+      type: exponential
+      min-delay: 1s
+      max-delay: 100s
+      codes: 404
+    - target: stackoverflow
+      max-attempts: 5
+      type: fixed
+      min-delay: 10s
+      codes: 429
+    - target: bot
+      max-attempts: 5
+      type: fixed
+      min-delay: 10s
+      codes: 429
+
+bucket4j:
+  enabled: true
+  filters:
+    - cache-name: rate-limit-bucket
+      url: .*
+      http-status-code: too_many_requests
+      rate-limits:
+        - bandwidths:
+            - capacity: 1000
+              time: 1
+              unit: hours
+              refill-speed: interval
+          cache-key: getRemoteAddr()
+          skip-condition: '@rateLimiterService.isSkipped(getRemoteAddr())'
+
+rate-limiter:
+  whitelist: ${WHITELISTED_IPS:localhost}

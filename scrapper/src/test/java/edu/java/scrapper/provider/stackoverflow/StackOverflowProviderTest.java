@@ -3,9 +3,12 @@ package edu.java.scrapper.provider.stackoverflow;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import edu.java.configuration.ApplicationConfig;
+import edu.java.configuration.RetryConfig;
 import edu.java.provider.api.LinkInformation;
 import edu.java.provider.stackoverflow.StackOverflowInformationProvider;
 import java.net.URI;
+import java.time.Duration;
+import java.util.List;
 import lombok.SneakyThrows;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -21,7 +24,20 @@ public class StackOverflowProviderTest {
     private static final ApplicationConfig EMPTY_CONFIG = new ApplicationConfig(
         null,
         null,
-        new ApplicationConfig.StackOverflowCredentials(null, null)
+        new ApplicationConfig.StackOverflowCredentials(null, null),
+        null
+    );
+    private static final RetryConfig RETRY_CONFIG = new RetryConfig(
+        List.of(new RetryConfig.RetryElement(
+                "stackoverflow",
+                "fixed",
+                1,
+                1,
+                Duration.ofSeconds(1),
+                null,
+                List.of(404)
+            )
+        )
     );
 
     @BeforeAll
@@ -45,7 +61,8 @@ public class StackOverflowProviderTest {
             new StackOverflowInformationProvider(
                 server.baseUrl(),
                 EMPTY_CONFIG,
-                new ObjectMapper()
+                new ObjectMapper(),
+                RETRY_CONFIG
             );
         var info = provider.fetchInformation(new URI("https://stackoverflow.com/questions/100/?hello_world"));
         Assertions.assertThat(info)
@@ -63,7 +80,8 @@ public class StackOverflowProviderTest {
             new StackOverflowInformationProvider(
                 server.baseUrl(),
                 EMPTY_CONFIG,
-                new ObjectMapper()
+                new ObjectMapper(),
+                RETRY_CONFIG
             );
         var info = provider.fetchInformation(new URI("https://stackoverflow.com/questions/101/?hello_world"));
         Assertions.assertThat(info).isNull();
@@ -76,7 +94,8 @@ public class StackOverflowProviderTest {
             new StackOverflowInformationProvider(
                 server.baseUrl(),
                 EMPTY_CONFIG,
-                new ObjectMapper()
+                new ObjectMapper(),
+                RETRY_CONFIG
             );
         var info = provider.isSupported(new URI("https://stackoverflow.com/questions/100/?hello_world"));
         Assertions.assertThat(info).isTrue();
@@ -89,7 +108,8 @@ public class StackOverflowProviderTest {
             new StackOverflowInformationProvider(
                 server.baseUrl(),
                 EMPTY_CONFIG,
-                new ObjectMapper()
+                new ObjectMapper(),
+                RETRY_CONFIG
             );
         var info = provider.isSupported(new URI("https://memoryoutofrange.com/jij/hih"));
         Assertions.assertThat(info).isFalse();

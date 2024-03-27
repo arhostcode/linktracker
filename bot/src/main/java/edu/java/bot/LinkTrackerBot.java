@@ -41,4 +41,5 @@ public class LinkTrackerBot implements Bot {
         telegramBot.shutdown();
         log.info("Telegram bot was stopped");
     }
+
 }
